@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GharDhundo - Property List Karo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --orange: #FF6B35;
+            --deep:   #1A1A2E;
+            --teal:   #0F3460;
+            --gold:   #F7B731;
+            --green:  #27AE60;
+            --cream:  #FFF8F0;
+        }
+        body { font-family: 'Hind', sans-serif; background: #f4f6f8; color: var(--deep); }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--teal);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+        }
+        .nav-logo { font-family:'Baloo 2',cursive; font-size:1.6rem; font-weight:800; color:#fff; }
+        .nav-logo span { color: var(--gold); }
+        .nav-right { display:flex; align-items:center; gap:14px; }
+        .nav-user {
+            color: rgba(255,255,255,0.8); font-size:0.9rem;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px; border-radius:50px;
+        }
+        .nav-user strong { color: var(--gold); }
+        nav a.logout { color:rgba(255,255,255,0.6); text-decoration:none; font-size:0.85rem; transition:.2s; }
+        nav a.logout:hover { color:#fff; }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            background: linear-gradient(135deg, var(--deep), #16213E);
+            padding: 36px 24px;
+            text-align: center;
+            color: #fff;
+        }
+        .page-header h1 { font-family:'Baloo 2',cursive; font-size:clamp(1.6rem,4vw,2.4rem); font-weight:800; }
+        .page-header h1 span { color: var(--orange); }
+        .page-header p { color:rgba(255,255,255,0.65); margin-top:8px; font-size:0.97rem; }
+
+        /* ── FORM WRAPPER ── */
+        .form-wrapper { max-width: 800px; margin: 32px auto; padding: 0 20px 60px; }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            border: 1.5px solid #eee;
+        }
+        .section-title {
+            font-family:'Baloo 2',cursive;
+            font-size:1.1rem; font-weight:800;
+            color: var(--teal);
+            margin-bottom:20px;
+            padding-bottom:12px;
+            border-bottom:2px solid #f0f0f0;
+            display:flex; align-items:center; gap:8px;
+        }
+        .section-title .icon { font-size:1.3rem; }
+
+        /* ── FORM ROW / GROUP ── */
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .form-group { margin-bottom:16px; }
+        .form-group.full { grid-column:1/-1; }
+        label {
+            display:block; font-size:0.85rem; font-weight:600;
+            color:#374151; margin-bottom:6px;
+        }
+        label .req { color:var(--orange); }
+        input[type=text], input[type=number], input[type=tel], input[type=date],
+        select, textarea {
+            width:100%; padding:11px 14px;
+            border:1.5px solid #e5e7eb; border-radius:10px;
+            font-family:'Hind',sans-serif; font-size:0.95rem;
+            color:var(--deep); background:#fff; outline:none; transition:.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color:var(--orange);
+            box-shadow:0 0 0 3px rgba(255,107,53,0.1);
+        }
+        textarea { resize:vertical; min-height:80px; }
+
+        /* ── RENT / SALE TOGGLE ── */
+        .toggle-group { display:flex; gap:0; border-radius:10px; overflow:hidden; border:1.5px solid #e5e7eb; width:fit-content; }
+        .toggle-group input[type=radio] { display:none; }
+        .toggle-group label {
+            padding:10px 24px; cursor:pointer;
+            background:#fff; color:#6b7280; font-weight:600;
+            transition:.2s; border:none; font-size:0.92rem;
+            margin:0;
+        }
+        .toggle-group input[type=radio]:checked + label {
+            background:var(--orange); color:#fff;
+        }
+
+        /* ── PHOTO UPLOAD ZONE ── */
+        .photo-drop-zone {
+            border:2.5px dashed #d1d5db;
+            border-radius:16px;
+            padding:36px 20px;
+            text-align:center;
+            cursor:pointer;
+            transition:.3s;
+            background:#fafafa;
+            position:relative;
+        }
+        .photo-drop-zone:hover, .photo-drop-zone.dragover {
+            border-color:var(--orange);
+            background:#fff5f0;
+        }
+        .photo-drop-zone .drop-icon { font-size:3rem; margin-bottom:10px; }
+        .photo-drop-zone h3 { font-family:'Baloo 2',cursive; font-size:1.1rem; color:var(--teal); }
+        .photo-drop-zone p  { color:#9ca3af; font-size:0.85rem; margin-top:4px; }
+        .photo-drop-zone input[type=file] {
+            position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+        }
+
+        /* ── PHOTO PREVIEW GRID ── */
+        .photo-previews {
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+            gap:10px;
+            margin-top:16px;
+        }
+        .preview-item {
+            position:relative; border-radius:10px; overflow:hidden;
+            aspect-ratio:1; border:2px solid #e5e7eb;
+        }
+        .preview-item img { width:100%; height:100%; object-fit:cover; }
+        .preview-item .remove-btn {
+            position:absolute; top:4px; right:4px;
+            background:rgba(0,0,0,0.65); color:#fff;
+            border:none; border-radius:50%;
+            width:22px; height:22px; font-size:0.75rem;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            line-height:1;
+        }
+        .preview-item .main-badge {
+            position:absolute; bottom:4px; left:4px;
+            background:var(--orange); color:#fff;
+            font-size:0.65rem; font-weight:700;
+            padding:2px 6px; border-radius:4px;
+        }
+        .photo-count-info {
+            margin-top:10px;
+            font-size:0.82rem;
+            color:#6b7280;
+        }
+
+        /* ── AMENITIES GRID ── */
+        .amenity-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:10px; }
+        .amenity-option input[type=checkbox] { display:none; }
+        .amenity-option label {
+            display:flex; align-items:center; gap:7px;
+            padding:9px 12px; border:1.5px solid #e5e7eb;
+            border-radius:9px; cursor:pointer;
+            font-size:0.84rem; font-weight:500; color:#374151;
+            background:#fafafa; transition:.2s;
+        }
+        .amenity-option label:hover { border-color:var(--orange); background:#fff5f0; }
+        .amenity-option input[type=checkbox]:checked + label {
+            background:var(--teal); color:#fff; border-color:var(--teal);
+        }
+        .amenity-option .emoji { font-size:1.1rem; }
+
+        /* ── SUBMIT BTN ── */
+        .submit-btn {
+            width:100%; padding:16px;
+            background:linear-gradient(135deg, var(--orange), #ff8c42);
+            color:#fff; border:none; border-radius:14px;
+            font-family:'Baloo 2',cursive; font-size:1.2rem; font-weight:800;
+            cursor:pointer; transition:.3s; letter-spacing:0.3px;
+            margin-top:8px;
+        }
+        .submit-btn:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(255,107,53,0.4); }
+        .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+        /* ── FLASH ── */
+        .flash {
+            padding:12px 16px; border-radius:10px;
+            margin-bottom:20px; font-size:0.92rem; font-weight:500;
+        }
+        .flash.success { background:#d1fae5; color:#065f46; border-left:4px solid var(--green); }
+        .flash.danger  { background:#fee2e2; color:#991b1b; border-left:4px solid #ef4444; }
+
+        /* ── PROGRESS STEPS ── */
+        .steps {
+            display:flex; justify-content:center; gap:0;
+            margin-bottom:28px; background:#fff;
+            border-radius:14px; padding:16px; 
+            box-shadow:0 2px 12px rgba(0,0,0,0.05);
+        }
+        .step {
+            flex:1; text-align:center; position:relative;
+            color:#9ca3af; font-size:0.78rem; font-weight:600;
+        }
+        .step::after {
+            content:''; position:absolute;
+            top:14px; left:60%; right:-40%;
+            height:2px; background:#e5e7eb;
+        }
+        .step:last-child::after { display:none; }
+        .step-dot {
+            width:28px; height:28px; border-radius:50%;
+            background:#e5e7eb; color:#9ca3af;
+            display:flex; align-items:center; justify-content:center;
+            margin:0 auto 6px; font-size:0.8rem; font-weight:700;
+            position:relative; z-index:1;
+        }
+        .step.active .step-dot { background:var(--orange); color:#fff; }
+        .step.active { color:var(--orange); }
+        .step.done   .step-dot { background:var(--green); color:#fff; }
+        .step.done   { color:var(--green); }
+
+        /* ── UPLOAD PROGRESS ── */
+        .upload-progress {
+            display:none; margin-top:12px;
+            background:#f3f4f6; border-radius:8px; overflow:hidden;
+            height:6px;
+        }
+        .upload-progress-bar {
+            height:100%; background:var(--orange);
+            width:0%; transition:width 0.3s;
+        }
+
+        @media(max-width:640px) {
+            .form-row { grid-template-columns:1fr; }
+            .steps { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">Ghar<span>Dhundo</span></div>
+    <div class="nav-right">
+        <div class="nav-user">Namaste, <strong>{{ user }}</strong></div>
+        <a href="/locality" class="logout">← Areas</a>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h1>Apni <span>Property</span> List Karo</h1>
+    <p>Free listing • Photos daalo • Direct buyers/tenants se connect karo</p>
+</div>
+
+<div class="form-wrapper">
+
+    <!-- PROGRESS STEPS -->
+    <div class="steps">
+        <div class="step done" id="s1"><div class="step-dot">✓</div>Login</div>
+        <div class="step active" id="s2"><div class="step-dot">2</div>Property Details</div>
+        <div class="step" id="s3"><div class="step-dot">3</div>Photos</div>
+        <div class="step" id="s4"><div class="step-dot">4</div>Submit</div>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/list-property" enctype="multipart/form-data" id="listForm">
+
+        <!-- ── SECTION 1: Basic Info ── -->
+        <div class="section-card">
+            <div class="section-title"><span class="icon">🏠</span> Basic Information</div>
+
+            <!-- Rent vs Sale Toggle -->
+            <div class="form-group">
+                <label>Ye Property Hai <span class="req">*</span></label>
+                <div class="toggle-group">
+                    <input type="radio" name="listing_for" id="forRent" value="Rent" checked>
+                    <label for="forRent">🔑 Rent ke liye</label>
+                    <input type="radio" name="listing_for" id="forSale" value="Sale">
+                    <label for="forSale">💰 Sale ke liye</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Property Title / Heading <span class="req">*</span></label>
+                    <input type="text" name="title" placeholder="Jaise: 1BHK Flat near Dombivli Station, AC ke saath" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Property Type <span class="req">*</span></label>
+                    <select name="type" required>
+                        <option value="">-- Select --</option>
+                        <option>Single Room</option>
+                        <option>1 BHK Flat</option>
+                        <option>2 BHK Flat</option>
+                        <option>3 BHK Flat</option>
+                        <option>Studio Apartment</option>
+                        <option>PG / Hostel</option>
+                        <option>Flat Sharing</option>
+                        <option>Bungalow / Villa</option>
+                        <option>Shop / Office</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Locality <span class="req">*</span></label>
+                    <select name="locality" required>
+                        <option value="">-- Area Choose Karo --</option>
+                        {% for area in areas %}
+                        <option value="{{ area }}">{{ area }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label>Full Address / Landmark</label>
+                    <input type="text" name="address" placeholder="Jaise: Sector 12, near HDFC Bank, Station se 5 min walk">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SECTION 2: Pricing ── -->
+        <div class="section-card">
+            <div class="section-title"><span class="icon">💸</span> Pricing Details</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label id="rentLabel">Monthly Rent (₹) <span class="req">*</span></label>
+                    <input type="number" name="rent" placeholder="Jaise: 7500" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Security Deposit (₹)</label>
+                    <input type="number" name="deposit" placeholder="Jaise: 15000" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Floor</label>
+                    <select name="floor">
+                        <option>Ground Floor</option>
+                        <option>1st Floor</option>
+                        <option>2nd Floor</option>
+                        <option>3rd Floor</option>
+                        <option>4th Floor+</option>
+                        <option>Top Floor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Area (sq. ft.)</label>
+                    <input type="number" name="area_sqft" placeholder="Jaise: 450" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Available From <span class="req">*</span></label>
+                    <select name="available" required>
+                        <option value="Immediately">Immediately</option>
+                        <option value="Within 15 days">Within 15 days</option>
+                        <option value="Within 1 month">Within 1 month</option>
+                        <option value="After 1 month">After 1 month</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Tenant</label>
+                    <select name="tenant_pref">
+                        <option value="Any">Anyone</option>
+                        <option value="Family">Family</option>
+                        <option value="Bachelor Male">Bachelor (Male)</option>
+                        <option value="Bachelor Female">Bachelor (Female)</option>
+                        <option value="Working Professional">Working Professional</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SECTION 3: Amenities ── -->
+        <div class="section-card">
+            <div class="section-title"><span class="icon">✨</span> Amenities / Suvidhaen</div>
+
+            <div class="amenity-grid">
+                {% set amenities_list = [
+                    ("WiFi", "📶"), ("AC", "❄️"), ("Parking", "🚗"),
+                    ("Furnished", "🛋️"), ("Semi-Furnished", "🪑"), ("CCTV", "📷"),
+                    ("Lift/Elevator", "🛗"), ("24h Water", "💧"), ("24h Light", "⚡"),
+                    ("Gas/Piped Gas", "🔥"), ("Security Guard", "💂"), ("Gym", "💪"),
+                    ("Garden", "🌿"), ("Power Backup", "🔋"), ("Pet Allowed", "🐾"),
+                    ("Near Station", "🚉"), ("Near Market", "🛒"), ("Near School", "🏫"),
+                ] %}
+                {% for name, emoji in amenities_list %}
+                <div class="amenity-option">
+                    <input type="checkbox" name="amenities" id="am_{{ loop.index }}" value="{{ name }}">
+                    <label for="am_{{ loop.index }}">
+                        <span class="emoji">{{ emoji }}</span> {{ name }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ── SECTION 4: PHOTOS ── -->
+        <div class="section-card">
+            <div class="section-title"><span class="icon">📸</span> Property Ki Photos Daalo</div>
+
+            <div class="photo-drop-zone" id="dropZone">
+                <div class="drop-icon">📷</div>
+                <h3>Photos yahan drop karo ya click karo</h3>
+                <p>Maximum 8 photos • JPG, PNG, WEBP • Max 2MB per photo</p>
+                <p style="margin-top:6px; color:var(--orange); font-weight:600;">Pehli photo main photo hogi (thumbnail)</p>
+                <input type="file" name="photos" id="photoInput" multiple accept="image/*">
+            </div>
+
+            <div class="upload-progress" id="uploadProgress">
+                <div class="upload-progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="photo-previews" id="photoPreviews"></div>
+            <div class="photo-count-info" id="photoCountInfo"></div>
+        </div>
+
+        <!-- ── SECTION 5: Description ── -->
+        <div class="section-card">
+            <div class="section-title"><span class="icon">📝</span> Description (Optional)</div>
+            <div class="form-group">
+                <label>Property ke baare mein bataiye</label>
+                <textarea name="description" rows="4" 
+                    placeholder="Jaise: Ye flat Station se 5 minute ki walk par hai. Building mein 24 ghante security hai. Flat mein modular kitchen aur wooden flooring hai. Bhi jagah quietachai aur peaceful hai..."></textarea>
+            </div>
+        </div>
+
+        <!-- ── SUBMIT ── -->
+        <div class="section-card" style="text-align:center; padding:24px;">
+            <p style="color:#6b7280; font-size:0.88rem; margin-bottom:16px;">
+                ✅ Free listing • 🔒 Aapka number safe hai • 📞 Direct buyers aapko contact karenge
+            </p>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                🚀 Property Live Karo — Bilkul FREE!
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // ── Rent/Sale Toggle ──────────────────────────────────────────────────────
+    document.querySelectorAll('input[name="listing_for"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const label = document.getElementById('rentLabel');
+            label.innerHTML = radio.value === 'Sale'
+                ? 'Sale Price (₹) <span class="req">*</span>'
+                : 'Monthly Rent (₹) <span class="req">*</span>';
+        });
+    });
+
+    // ── Photo Upload & Preview ────────────────────────────────────────────────
+    const input      = document.getElementById('photoInput');
+    const dropZone   = document.getElementById('dropZone');
+    const previews   = document.getElementById('photoPreviews');
+    const countInfo  = document.getElementById('photoCountInfo');
+    const MAX_PHOTOS = 8;
+
+    let selectedFiles = [];
+
+    // Drag & Drop
+    ['dragenter','dragover'].forEach(e => {
+        dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragover'); });
+    });
+    ['dragleave','drop'].forEach(e => {
+        dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragover'); });
+    });
+    dropZone.addEventListener('drop', ev => {
+        addFiles([...ev.dataTransfer.files]);
+    });
+
+    input.addEventListener('change', () => {
+        addFiles([...input.files]);
+        input.value = ''; // reset so same file can be re-added
+    });
+
+    function addFiles(newFiles) {
+        newFiles.forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            if (selectedFiles.length >= MAX_PHOTOS) return;
+            if (file.size > 2 * 1024 * 1024) {
+                alert(`${file.name} 2MB se bada hai. Skip kar rahe hain.`);
+                return;
+            }
+            selectedFiles.push(file);
+        });
+        renderPreviews();
+        syncFileInput();
+    }
+
+    function renderPreviews() {
+        previews.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="photo ${idx+1}">
+                    ${idx === 0 ? '<span class="main-badge">Main Photo</span>' : ''}
+                    <button type="button" class="remove-btn" onclick="removePhoto(${idx})">✕</button>
+                `;
+                previews.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+        countInfo.textContent = selectedFiles.length > 0
+            ? `${selectedFiles.length} photo${selectedFiles.length > 1 ? 's' : ''} selected. ${MAX_PHOTOS - selectedFiles.length} aur add kar sakte ho.`
+            : '';
+    }
+
+    function removePhoto(idx) {
+        selectedFiles.splice(idx, 1);
+        renderPreviews();
+        syncFileInput();
+    }
+
+    function syncFileInput() {
+        // Replace the file input's files with our selectedFiles array
+        const dt = new DataTransfer();
+        selectedFiles.forEach(f => dt.items.add(f));
+        input.files = dt.files;
+    }
+
+    // ── Form Submit ───────────────────────────────────────────────────────────
+    document.getElementById('listForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Upload ho raha hai...';
+
+        // Show progress bar animation
+        const prog = document.getElementById('uploadProgress');
+        const bar  = document.getElementById('progressBar');
+        prog.style.display = 'block';
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct = Math.min(pct + 5, 90);
+            bar.style.width = pct + '%';
+        }, 200);
+    });
+
+    // ── Step indicators ───────────────────────────────────────────────────────
+    const fields = ['title','locality','rent'];
+    fields.forEach(name => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.addEventListener('input', checkSteps);
+    });
+    document.getElementById('photoInput').addEventListener('change', checkSteps);
+
+    function checkSteps() {
+        const title    = document.querySelector('[name="title"]').value.trim();
+        const locality = document.querySelector('[name="locality"]').value;
+        const rent     = document.querySelector('[name="rent"]').value;
+
+        if (title && locality && rent) {
+            document.getElementById('s2').className = 'step done';
+            document.getElementById('s2').querySelector('.step-dot').textContent = '✓';
+            document.getElementById('s3').className = 'step active';
+        }
+        if (selectedFiles.length > 0) {
+            document.getElementById('s3').className = 'step done';
+            document.getElementById('s3').querySelector('.step-dot').textContent = '✓';
+            document.getElementById('s4').className = 'step active';
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GharDhundo - Mumbai Room Rent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --orange: #FF6B35;
+            --deep: #1A1A2E;
+            --teal: #0F3460;
+            --gold: #F7B731;
+            --cream: #FFF8F0;
+            --green: #27AE60;
+            --light-gray: #F4F6F8;
+        }
+
+        body {
+            font-family: 'Hind', sans-serif;
+            background: var(--cream);
+            color: var(--deep);
+            overflow-x: hidden;
+        }
+
+        /* NAV */
+        nav {
+            background: var(--teal);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .nav-logo {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+        .nav-logo span { color: var(--gold); }
+        nav a.btn-nav {
+            background: var(--orange);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        nav a.btn-nav:hover { background: #e85d28; transform: scale(1.04); }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--teal) 0%, #16213E 60%, #0F3460 100%);
+            min-height: 88vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 24px 40px;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255,107,53,0.15) 0%, transparent 70%);
+            top: -100px; right: -100px;
+            border-radius: 50%;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(247,183,49,0.1) 0%, transparent 70%);
+            bottom: -50px; left: -50px;
+            border-radius: 50%;
+        }
+        .hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            gap: 48px;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-text { flex: 1; min-width: 300px; }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(247,183,49,0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            animation: fadeUp 0.6s ease both;
+        }
+        .hero h1 {
+            font-family: 'Baloo 2', cursive;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 18px;
+            animation: fadeUp 0.7s ease 0.1s both;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero p {
+            color: rgba(255,255,255,0.78);
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin-bottom: 32px;
+            animation: fadeUp 0.7s ease 0.2s both;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.7s ease 0.3s both;
+        }
+        .btn-primary-hero {
+            background: var(--orange);
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: 0.3s;
+            box-shadow: 0 6px 24px rgba(255,107,53,0.4);
+        }
+        .btn-primary-hero:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,107,53,0.5); }
+        .btn-secondary-hero {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: 0.3s;
+        }
+        .btn-secondary-hero:hover { background: rgba(255,255,255,0.2); }
+
+        /* HERO CARD */
+        .hero-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 28px;
+            flex: 0 0 300px;
+            animation: fadeUp 0.7s ease 0.4s both;
+        }
+        .hero-card h3 { color: var(--gold); font-family: 'Baloo 2', cursive; margin-bottom: 16px; font-size: 1.1rem; }
+        .stat-row { display: flex; flex-direction: column; gap: 12px; }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+        }
+        .stat-item .label { font-size: 0.88rem; color: rgba(255,255,255,0.7); }
+        .stat-item .val { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 700; color: var(--orange); }
+
+        /* TRUST BANNER */
+        .trust-banner {
+            background: var(--deep);
+            padding: 22px 24px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .trust-item { color: rgba(255,255,255,0.8); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .trust-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+
+        /* FEATURES */
+        .section { padding: 70px 24px; }
+        .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-label {
+            color: var(--orange);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            color: var(--deep);
+            margin-bottom: 14px;
+            line-height: 1.2;
+        }
+        .section-sub { color: #6b7280; font-size: 1rem; max-width: 520px; line-height: 1.7; margin-bottom: 48px; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,0.1); }
+        .feature-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--orange), #ff8c42);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 1.4rem;
+            color: #fff;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+        }
+        .feature-card h3 { font-family: 'Baloo 2', cursive; font-size: 1.15rem; font-weight: 700; color: var(--deep); margin-bottom: 8px; }
+        .feature-card p { color: #6b7280; font-size: 0.92rem; line-height: 1.65; }
+
+        /* STORY SECTION */
+        .story-section {
+            background: linear-gradient(135deg, #1A1A2E, #16213E);
+            padding: 70px 24px;
+            color: #fff;
+        }
+        .story-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+        .story-inner .section-label { color: var(--gold); }
+        .story-inner .section-title { color: #fff; }
+        .story-inner p {
+            color: rgba(255,255,255,0.75);
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 20px;
+        }
+        blockquote {
+            border-left: 4px solid var(--orange);
+            padding: 16px 24px;
+            background: rgba(255,107,53,0.08);
+            border-radius: 0 12px 12px 0;
+            text-align: left;
+            margin: 32px 0;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* HOW IT WORKS */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .step {
+            text-align: center;
+            padding: 28px 20px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            position: relative;
+        }
+        .step-num {
+            width: 56px; height: 56px;
+            background: var(--teal);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0 auto 16px;
+        }
+        .step h3 { font-family: 'Baloo 2', cursive; font-size: 1.05rem; color: var(--deep); margin-bottom: 8px; }
+        .step p { color: #6b7280; font-size: 0.88rem; line-height: 1.6; }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: var(--orange);
+            padding: 60px 24px;
+            text-align: center;
+        }
+        .cta-section h2 {
+            font-family: 'Baloo 2', cursive;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .cta-section p { color: rgba(255,255,255,0.88); font-size: 1.05rem; margin-bottom: 28px; }
+        .btn-cta-white {
+            background: #fff;
+            color: var(--orange);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.05rem;
+            transition: 0.3s;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .btn-cta-white:hover { transform: translateY(-3px); }
+
+        /* FOOTER */
+        footer {
+            background: var(--deep);
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 24px;
+            font-size: 0.88rem;
+        }
+        footer strong { color: var(--gold); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+            .hero-card { display: none; }
+            .trust-banner { gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">Ghar<span>Dhundo</span></div>
+    <a href="/login" class="btn-nav">Login / Register</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <div class="hero-badge">Mumbai - Navi Mumbai - Thane</div>
+            <h1>Apna <span>Sasta</span> aur<br>Bharosemand Ghar<br>Dhundhiye</h1>
+            <p>Koi broker nahi, koi hidden charges nahi. Seedha makan malik se baat karo.
+               Mumbai, Navi Mumbai, Thane aur aaspaas ke areas mein rooms, PG aur flats
+               bilkul aasaani se dhundhiye - aapke phone par.</p>
+            <div class="hero-btns">
+                <a href="/login" class="btn-primary-hero">Abhi Shuru Karo - Free Hai</a>
+                <a href="#how-it-works" class="btn-secondary-hero">Kaise Kaam Karta Hai</a>
+            </div>
+        </div>
+        <div class="hero-card">
+            <h3>Live Stats</h3>
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="label">Rooms Available</span>
+                    <span class="val">400+</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Areas Covered</span>
+                    <span class="val">12+</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Min Rent</span>
+                    <span class="val">Rs.3,500</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Zero Broker Fee</span>
+                    <span class="val">FREE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST BANNER -->
+<div class="trust-banner">
+    <div class="trust-item"><div class="trust-dot"></div>100% Free Registration</div>
+    <div class="trust-item"><div class="trust-dot"></div>Verified Listings</div>
+    <div class="trust-item"><div class="trust-dot"></div>Direct Owner Contact</div>
+    <div class="trust-item"><div class="trust-dot"></div>Works on Mobile</div>
+    <div class="trust-item"><div class="trust-dot"></div>No Hidden Charges</div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" style="background: var(--light-gray);">
+    <div class="section-inner">
+        <div class="section-label">Kyun GharDhundo?</div>
+        <h2 class="section-title">Hamara Fark Samjho</h2>
+        <p class="section-sub">Hum jaante hain ek chhote sheher se Mumbai aane wale insaan ke liye ghar dhundna kitna mushkil hota hai. Isliye hamne yeh banaya.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">0</div>
+                <h3>Zero Broker Fee</h3>
+                <p>Koi bhi broker nahi. Seedha makan malik se baat karo aur hazaron rupaye bachao.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">F</div>
+                <h3>Free Registration</h3>
+                <p>Account banana bilkul free hai. Koi subscription nahi, koi hidden payment nahi.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">M</div>
+                <h3>Mobile Friendly</h3>
+                <p>Chhote se mobile par bhi perfectly kaam karta hai. 2G/3G par bhi fast chalega.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">L</div>
+                <h3>Local Areas</h3>
+                <p>Mumbai, Navi Mumbai, Thane, Dombivli, Kalyan - har jagah ki listings milegi.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">C</div>
+                <h3>Call Timing Choose Karo</h3>
+                <p>Aap apni marzi se call ka time set karo. Koi unexpected call nahi aayega.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">S</div>
+                <h3>Safe aur Secure</h3>
+                <p>Aapki personal details safe hain. Sirf aap hi choose karte ho kise contact karna hai.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STORY SECTION -->
+<section class="story-section">
+    <div class="story-inner">
+        <div class="section-label">Hamari Kahani</div>
+        <h2 class="section-title">Ek Zarooratmand Insaan Ke Liye</h2>
+        <p>Mumbai mein aana ek sapna hota hai - aur pehla qadam hota hai ek safe ghar dhundna.
+           Lekin brokers ki fees, fake listings, aur language barriers ne is sapne ko kathin bana diya.</p>
+        <blockquote>
+            "Main jab pehli baar Dombivli aaya tha, toh 3 din tak footpath par sona pada kyunki
+             koi sahi website nahi thi jahan chhote budget mein room mil sake."
+             <br><br>- Ramesh Yadav, factory worker, UP se Mumbai
+        </blockquote>
+        <p>GharDhundo unke liye hai jo pehli baar sheher aaye hain, jo kaam dhundh rahe hain,
+           jo apne parivaar ke liye ek chhat chahte hain. Hum unke saath hain.</p>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+    <div class="section-inner">
+        <div class="section-label">Process</div>
+        <h2 class="section-title">Bas 4 Asaan Steps</h2>
+        <p class="section-sub">Registration se lekar ghar milne tak - ek simple process.</p>
+        <div class="steps-grid">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Register Karo</h3>
+                <p>Free mein account banao - naam, mobile aur email se.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Area Choose Karo</h3>
+                <p>Apna preferred area select karo - station ke paas ya kaam ke paas.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Room Dekho</h3>
+                <p>Photos aur details dekho, price compare karo.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <h3>Call Ka Time Lo</h3>
+                <p>Enquiry bhejo aur apna convenient call time set karo.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <h2>Aaj Hi Shuru Karo - Bilkul Free!</h2>
+    <p>Hazaaro log already apna ghar GharDhundo se dhundh chuke hain. Ab aapki baari hai.</p>
+    <a href="/login" class="btn-cta-white">Free Mein Register Karo</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>Made with care for Mumbai's hardworking people &nbsp;|&nbsp; <strong>GharDhundo.in</strong></p>
+    <p style="margin-top:6px;">Mumbai | Navi Mumbai | Thane | Kalyan | Dombivli | Panvel</p>
+</footer>
+
+</body>
+</html>

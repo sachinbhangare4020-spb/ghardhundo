@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GharDhundo - {{ locality }} Rooms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --orange: #FF6B35;
+            --deep:   #1A1A2E;
+            --teal:   #0F3460;
+            --gold:   #F7B731;
+            --green:  #27AE60;
+        }
+        body { font-family:'Hind',sans-serif; background:#f4f6f8; color:var(--deep); }
+
+        /* NAV */
+        nav {
+            background:var(--teal); padding:14px 24px;
+            display:flex; justify-content:space-between; align-items:center;
+            flex-wrap:wrap; gap:10px;
+        }
+        .nav-left { display:flex; align-items:center; gap:16px; }
+        .nav-logo  { font-family:'Baloo 2',cursive; font-size:1.5rem; font-weight:800; color:#fff; }
+        .nav-logo span { color:var(--gold); }
+        .breadcrumb { color:rgba(255,255,255,0.6); font-size:0.85rem; }
+        .breadcrumb a { color:rgba(255,255,255,0.7); text-decoration:none; }
+        .breadcrumb a:hover { color:var(--gold); }
+        .nav-user { color:rgba(255,255,255,0.75); font-size:0.88rem; }
+        .nav-user strong { color:var(--gold); }
+
+        /* PAGE HEADER */
+        .page-header {
+            background:linear-gradient(90deg,var(--deep),#16213E);
+            padding:28px 24px; color:#fff;
+            display:flex; justify-content:space-between; align-items:center;
+            flex-wrap:wrap; gap:12px;
+        }
+        .page-header h1 { font-family:'Baloo 2',cursive; font-size:clamp(1.4rem,3vw,2rem); font-weight:800; }
+        .page-header h1 span { color:var(--orange); }
+        .page-header p { color:rgba(255,255,255,0.65); font-size:0.9rem; margin-top:4px; }
+        .header-stats { display:flex; gap:20px; }
+        .h-stat { text-align:center; }
+        .h-stat .v { font-family:'Baloo 2',cursive; font-size:1.4rem; font-weight:800; color:var(--gold); }
+        .h-stat .l { font-size:0.78rem; color:rgba(255,255,255,0.6); }
+
+        /* LAYOUT */
+        .layout { max-width:1200px; margin:0 auto; padding:28px 20px; display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
+
+        /* ── ROOM CARD ── */
+        .room-card {
+            background:#fff; border-radius:18px; overflow:hidden;
+            box-shadow:0 4px 16px rgba(0,0,0,0.07); margin-bottom:22px;
+            border:1.5px solid #eee; transition:.3s;
+        }
+        .room-card:hover { box-shadow:0 10px 32px rgba(0,0,0,0.12); border-color:var(--orange); }
+
+        /* Photo Gallery */
+        .room-gallery { position:relative; height:230px; overflow:hidden; background:#eee; }
+        .gallery-slides { display:flex; height:100%; transition:transform .4s ease; }
+        .gallery-slide  { min-width:100%; height:100%; }
+        .gallery-slide img { width:100%; height:100%; object-fit:cover; }
+        .gallery-slide .no-photo {
+            width:100%; height:100%;
+            background:linear-gradient(135deg,var(--teal),#16213E);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            color:rgba(255,255,255,0.4); font-size:3rem;
+        }
+        .gallery-slide .no-photo span { font-size:0.9rem; margin-top:8px; color:rgba(255,255,255,0.3); }
+
+        /* Nav arrows */
+        .gallery-arrow {
+            position:absolute; top:50%; transform:translateY(-50%);
+            background:rgba(0,0,0,0.45); color:#fff;
+            border:none; border-radius:50%; width:34px; height:34px;
+            font-size:1rem; cursor:pointer; z-index:2; display:flex; align-items:center; justify-content:center;
+            transition:.2s;
+        }
+        .gallery-arrow:hover { background:rgba(0,0,0,0.7); }
+        .gallery-arrow.prev { left:10px; }
+        .gallery-arrow.next { right:10px; }
+
+        /* Dot indicators */
+        .gallery-dots {
+            position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+            display:flex; gap:5px;
+        }
+        .gdot {
+            width:7px; height:7px; border-radius:50%;
+            background:rgba(255,255,255,0.5); cursor:pointer; transition:.2s;
+        }
+        .gdot.active { background:#fff; transform:scale(1.3); }
+
+        /* Badges on gallery */
+        .gallery-badge-tl {
+            position:absolute; top:10px; left:10px; z-index:2;
+            background:var(--teal); color:#fff;
+            padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;
+        }
+        .gallery-badge-sale { background:var(--orange); }
+        .gallery-avail {
+            position:absolute; top:10px; right:10px; z-index:2;
+            background:var(--green); color:#fff;
+            padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600;
+        }
+        .gallery-photo-count {
+            position:absolute; bottom:10px; right:10px; z-index:2;
+            background:rgba(0,0,0,0.55); color:#fff;
+            padding:3px 8px; border-radius:5px; font-size:0.72rem; font-weight:600;
+        }
+
+        /* Room body */
+        .room-body { padding:18px 20px; }
+        .room-body h3 { font-family:'Baloo 2',cursive; font-size:1.15rem; font-weight:700; color:var(--deep); margin-bottom:8px; }
+        .room-address { color:#9ca3af; font-size:0.82rem; margin-bottom:10px; display:flex; align-items:center; gap:4px; }
+        .room-meta    { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+        .meta-chip    { background:#f4f6f8; padding:4px 10px; border-radius:6px; font-size:0.78rem; color:#6b7280; font-weight:500; }
+        .amenities    { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+        .amenity      { background:#fff0e8; color:var(--orange); padding:3px 9px; border-radius:50px; font-size:0.75rem; font-weight:600; }
+
+        /* Room footer */
+        .room-footer {
+            display:flex; justify-content:space-between; align-items:center;
+            padding-top:14px; border-top:1px solid #f3f4f6;
+            flex-wrap:wrap; gap:12px;
+        }
+        .price-block .rent { font-family:'Baloo 2',cursive; font-size:1.6rem; font-weight:800; color:var(--orange); }
+        .price-block .deposit { font-size:0.78rem; color:#9ca3af; }
+        .price-block .sale-tag { background:#fff0e8; color:var(--orange); font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:4px; }
+
+        .action-btns { display:flex; gap:10px; flex-wrap:wrap; }
+        .enquiry-btn {
+            background:var(--teal); color:#fff;
+            padding:10px 20px; border-radius:50px; border:none;
+            font-family:'Baloo 2',cursive; font-weight:700; font-size:0.9rem;
+            cursor:pointer; transition:.2s;
+        }
+        .enquiry-btn:hover { background:var(--orange); transform:scale(1.04); }
+
+        /* Owner contact reveal */
+        .contact-reveal {
+            border:1.5px dashed #e5e7eb; border-radius:10px;
+            padding:10px 14px; font-size:0.85rem; cursor:pointer;
+            color:#6b7280; transition:.2s; background:#fafafa;
+            display:flex; align-items:center; gap:6px;
+        }
+        .contact-reveal:hover { border-color:var(--green); color:var(--green); background:#f0fff4; }
+        .contact-shown { border-color:var(--green); color:var(--green); background:#f0fff4; cursor:default; font-weight:600; }
+
+        /* Owner info strip */
+        .owner-strip {
+            margin-top:12px; padding:10px 14px;
+            background:#f0fff4; border-radius:10px;
+            border-left:3px solid var(--green);
+            font-size:0.84rem; color:#065f46;
+            display:none;
+        }
+        .owner-strip strong { color:var(--deep); }
+
+        /* No listings */
+        .no-listings {
+            background:#fff; border-radius:18px; padding:60px 24px;
+            text-align:center; border:2px dashed #e5e7eb;
+        }
+        .no-listings .icon { font-size:3rem; margin-bottom:14px; }
+        .no-listings h3 { font-family:'Baloo 2',cursive; font-size:1.3rem; color:var(--deep); margin-bottom:8px; }
+        .no-listings p { color:#9ca3af; margin-bottom:20px; }
+        .no-listings a {
+            background:var(--orange); color:#fff;
+            padding:12px 28px; border-radius:50px;
+            text-decoration:none; font-family:'Baloo 2',cursive; font-weight:700;
+            transition:.2s; display:inline-block;
+        }
+        .no-listings a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,53,0.35); }
+
+        /* LEAD FORM SIDEBAR */
+        .sidebar { position:sticky; top:20px; }
+        .lead-form {
+            background:#fff; border-radius:20px; padding:28px 24px;
+            box-shadow:0 8px 30px rgba(0,0,0,0.1); border:2px solid var(--orange);
+        }
+        .lead-form-title { font-family:'Baloo 2',cursive; font-size:1.25rem; font-weight:800; color:var(--deep); margin-bottom:4px; }
+        .lead-form-sub { color:#6b7280; font-size:0.85rem; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid #f0f0f0; }
+        .lead-form-sub strong { color:var(--orange); }
+        .form-group { margin-bottom:14px; }
+        .form-group label { display:block; font-size:0.82rem; font-weight:600; color:#374151; margin-bottom:5px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width:100%; padding:10px 13px; border:1.5px solid #e5e7eb; border-radius:9px;
+            font-family:'Hind',sans-serif; font-size:0.9rem; color:var(--deep);
+            outline:none; transition:.2s; background:#fff;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,107,53,0.08);
+        }
+        .form-group textarea { resize:vertical; min-height:70px; }
+        .time-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .time-option input[type=radio] { display:none; }
+        .time-option label {
+            display:block; padding:9px 10px; border:1.5px solid #e5e7eb; border-radius:8px;
+            text-align:center; cursor:pointer; font-size:0.8rem; color:#374151;
+            transition:.2s; font-family:'Hind',sans-serif; font-weight:500; background:#fafafa;
+        }
+        .time-option input[type=radio]:checked + label { background:var(--teal); color:#fff; border-color:var(--teal); }
+        .time-option label:hover { border-color:var(--orange); background:#fff0e8; }
+        .submit-lead {
+            width:100%; padding:14px;
+            background:linear-gradient(135deg,var(--orange),#ff8c42);
+            color:#fff; border:none; border-radius:12px;
+            font-family:'Baloo 2',cursive; font-size:1.1rem; font-weight:800;
+            cursor:pointer; transition:.3s; margin-top:8px; letter-spacing:.3px;
+        }
+        .submit-lead:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,53,0.4); }
+        .privacy-note { text-align:center; color:#9ca3af; font-size:0.75rem; margin-top:10px; line-height:1.5; }
+
+        /* Flash */
+        .flash { padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:.88rem; font-weight:500; }
+        .flash.success { background:#d1fae5; color:#065f46; border-left:4px solid var(--green); }
+        .flash.danger  { background:#fee2e2; color:#991b1b; border-left:4px solid #ef4444; }
+
+        @media(max-width:768px) {
+            .layout { grid-template-columns:1fr; }
+            .sidebar { position:static; }
+            .room-gallery { height:200px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <div class="nav-logo">Ghar<span>Dhundo</span></div>
+        <div class="breadcrumb">
+            <a href="/locality">Areas</a> › {{ locality }}
+        </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/list-property"
+           style="background:#FF6B35;color:white;padding:9px 18px;border-radius:50px;text-decoration:none;font-weight:600;font-size:0.9rem;">
+            + List Property
+        </a>
+        <div class="nav-user">Namaste, <strong>{{ user }}</strong> &nbsp;|&nbsp;
+            <a href="/logout" style="color:rgba(255,255,255,0.6);text-decoration:none;">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-header">
+    <div>
+        <h1>Rooms in <span>{{ locality }}</span></h1>
+        <p>Verified listings • Zero broker • Direct owner contact</p>
+    </div>
+    <div class="header-stats">
+        <div class="h-stat"><div class="v">{{ rooms|length }}</div><div class="l">Listings</div></div>
+        <div class="h-stat"><div class="v">₹0</div><div class="l">Broker Fee</div></div>
+        <div class="h-stat"><div class="v">24h</div><div class="l">Response</div></div>
+    </div>
+</div>
+
+<div class="layout">
+
+    <!-- ── LEFT: LISTINGS ── -->
+    <div class="rooms-list">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for cat, msg in messages %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% if rooms %}
+
+        {% for room in rooms %}
+        <div class="room-card">
+
+            <!-- PHOTO GALLERY -->
+            <div class="room-gallery" id="gallery_{{ loop.index }}">
+                <div class="gallery-slides" id="slides_{{ loop.index }}">
+
+                    {% if room.photo_list %}
+                        {% for photo in room.photo_list %}
+                        <div class="gallery-slide">
+                            <img src="{{ photo }}" alt="{{ room.title }}" loading="lazy">
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="gallery-slide">
+                            <div class="no-photo">
+                                🏠<span>No photo uploaded</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <!-- Badges -->
+                <div class="gallery-badge-tl {% if room.listing_for == 'Sale' %}gallery-badge-sale{% endif %}">
+                    {{ room.type }} {% if room.listing_for == 'Sale' %}• SALE{% endif %}
+                </div>
+                <div class="gallery-avail">{{ room.available }}</div>
+
+                {% if room.photo_list and room.photo_list|length > 1 %}
+                <button class="gallery-arrow prev" onclick="slideGallery({{ loop.index }}, -1)">‹</button>
+                <button class="gallery-arrow next" onclick="slideGallery({{ loop.index }},  1)">›</button>
+                <div class="gallery-dots" id="dots_{{ loop.index }}">
+                    {% for p in room.photo_list %}
+                    <div class="gdot {% if loop.first %}active{% endif %}"
+                         onclick="goToSlide({{ loop.index0 }}, {{ forloop.parentloop.index }})"></div>
+                    {% endfor %}
+                </div>
+                <div class="gallery-photo-count">{{ room.photo_list|length }} photos</div>
+                {% endif %}
+            </div>
+
+            <!-- ROOM BODY -->
+            <div class="room-body">
+                <h3>{{ room.title }}</h3>
+
+                {% if room.address %}
+                <div class="room-address">📍 {{ room.address }}</div>
+                {% endif %}
+
+                <div class="room-meta">
+                    <span class="meta-chip">{{ room.floor }}</span>
+                    {% if room.area %}<span class="meta-chip">{{ room.area }} sq.ft</span>{% endif %}
+                    <span class="meta-chip">📍 {{ locality }}</span>
+                    {% if room.tenant_pref %}<span class="meta-chip">👤 {{ room.tenant_pref }}</span>{% endif %}
+                    <span class="meta-chip">🗓 Listed {{ room.listed_at[:10] if room.listed_at else '' }}</span>
+                </div>
+
+                {% if room.amenities %}
+                <div class="amenities">
+                    {% for a in room.amenities %}
+                    <span class="amenity">{{ a }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if room.description %}
+                <p style="color:#6b7280; font-size:0.86rem; margin-bottom:12px; line-height:1.6;">{{ room.description[:180] }}{% if room.description|length > 180 %}…{% endif %}</p>
+                {% endif %}
+
+                <div class="room-footer">
+                    <div class="price-block">
+                        <div class="rent">
+                            ₹{{ room.rent }}
+                            <span style="font-size:0.9rem; font-weight:500; color:#9ca3af;">
+                                {% if room.listing_for == 'Sale' %}<span class="sale-tag">SALE</span>{% else %}/mo{% endif %}
+                            </span>
+                        </div>
+                        {% if room.deposit and room.deposit != '0' %}
+                        <div class="deposit">Deposit: ₹{{ room.deposit }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="action-btns">
+                        <!-- Owner Number Reveal -->
+                        <div class="contact-reveal" id="contact_btn_{{ loop.index }}"
+                             onclick="revealContact({{ loop.index }}, '{{ room.owner_mobile }}', '{{ room.owner_name }}')">
+                            📞 {{ room.blurred_mobile }}
+                        </div>
+
+                        <button class="enquiry-btn" onclick="focusForm()">Enquiry Karo</button>
+                    </div>
+                </div>
+
+                <!-- Owner details (hidden till clicked) -->
+                <div class="owner-strip" id="owner_strip_{{ loop.index }}">
+                    👤 <strong id="owner_name_{{ loop.index }}"></strong> &nbsp;|&nbsp;
+                    📞 <strong id="owner_mobile_{{ loop.index }}"></strong>
+                    &nbsp; <a href="#" id="whatsapp_{{ loop.index }}" target="_blank"
+                               style="background:#25D366;color:#fff;padding:3px 10px;border-radius:4px;text-decoration:none;font-size:0.78rem;font-weight:700;">
+                        WhatsApp
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <!-- NO LISTINGS -->
+        <div class="no-listings">
+            <div class="icon">🔍</div>
+            <h3>{{ locality }} mein abhi koi listing nahi hai</h3>
+            <p>Koi bhi apni property list kar sakta hai — free mein!</p>
+            <a href="/list-property">+ Pehli Property List Karo</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ── RIGHT: LEAD FORM SIDEBAR ── -->
+    <div class="sidebar">
+        <div class="lead-form" id="leadForm">
+            <div class="lead-form-title">Free Enquiry Bhejo</div>
+            <p class="lead-form-sub">Aapko <strong>{{ locality }}</strong> mein property chahiye? Form bharo — hum aapko call karenge.</p>
+
+            <form method="POST" action="/enquiry">
+                <input type="hidden" name="locality" value="{{ locality }}">
+
+                <div class="form-group">
+                    <label>Aapka Naam *</label>
+                    <input type="text" name="name" value="{{ user }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number *</label>
+                    <input type="tel" name="mobile" placeholder="10 digit number" maxlength="10" required>
+                </div>
+                <div class="form-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" name="email" placeholder="aapka@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Property Type *</label>
+                    <select name="property_type" required>
+                        <option value="">-- Select --</option>
+                        <option>Single Room</option>
+                        <option>1 BHK Flat</option>
+                        <option>2 BHK Flat</option>
+                        <option>3 BHK Flat</option>
+                        <option>PG / Hostel</option>
+                        <option>Flat Sharing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Budget (Monthly) *</label>
+                    <select name="budget" required>
+                        <option value="">-- Select --</option>
+                        <option>Under ₹4,000</option>
+                        <option>₹4,000 - ₹6,000</option>
+                        <option>₹6,000 - ₹9,000</option>
+                        <option>₹9,000 - ₹12,000</option>
+                        <option>₹12,000+</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Best Time to Call *</label>
+                    <div class="time-grid">
+                        <div class="time-option">
+                            <input type="radio" name="call_time" id="t1" value="Morning (9-11 AM)" required>
+                            <label for="t1">Morning<br>9–11 AM</label>
+                        </div>
+                        <div class="time-option">
+                            <input type="radio" name="call_time" id="t2" value="Afternoon (12-2 PM)">
+                            <label for="t2">Afternoon<br>12–2 PM</label>
+                        </div>
+                        <div class="time-option">
+                            <input type="radio" name="call_time" id="t3" value="Evening (5-7 PM)">
+                            <label for="t3">Evening<br>5–7 PM</label>
+                        </div>
+                        <div class="time-option">
+                            <input type="radio" name="call_time" id="t4" value="Night (8-10 PM)">
+                            <label for="t4">Raat<br>8–10 PM</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Special Requirement (Optional)</label>
+                    <textarea name="message" placeholder="Jaise: Station ke paas chahiye, ground floor…"></textarea>
+                </div>
+                <button type="submit" class="submit-lead">📞 Call Book Karo — FREE</button>
+                <p class="privacy-note">Aapka number safe hai. Sirf hamare team se callback milega.</p>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ── Gallery Slider ────────────────────────────────────────────────────────
+    const galleryState = {};
+
+    function slideGallery(id, dir) {
+        const slidesEl = document.getElementById('slides_' + id);
+        const slides   = slidesEl.querySelectorAll('.gallery-slide');
+        if (!slides.length) return;
+        if (!galleryState[id]) galleryState[id] = 0;
+        galleryState[id] = (galleryState[id] + dir + slides.length) % slides.length;
+        slidesEl.style.transform = `translateX(-${galleryState[id] * 100}%)`;
+        updateDots(id, galleryState[id]);
+    }
+
+    function goToSlide(slideIdx, galleryId) {
+        const slidesEl = document.getElementById('slides_' + galleryId);
+        galleryState[galleryId] = slideIdx;
+        slidesEl.style.transform = `translateX(-${slideIdx * 100}%)`;
+        updateDots(galleryId, slideIdx);
+    }
+
+    function updateDots(id, activeIdx) {
+        const dotsEl = document.getElementById('dots_' + id);
+        if (!dotsEl) return;
+        dotsEl.querySelectorAll('.gdot').forEach((d, i) => {
+            d.classList.toggle('active', i === activeIdx);
+        });
+    }
+
+    // Auto-play galleries
+    document.querySelectorAll('[id^="gallery_"]').forEach(gallery => {
+        const id = gallery.id.split('_')[1];
+        const slides = gallery.querySelectorAll('.gallery-slide');
+        if (slides.length > 1) {
+            setInterval(() => slideGallery(id, 1), 4000);
+        }
+    });
+
+    // ── Owner Contact Reveal ──────────────────────────────────────────────────
+    function revealContact(idx, mobile, ownerName) {
+        const btn   = document.getElementById('contact_btn_' + idx);
+        const strip = document.getElementById('owner_strip_' + idx);
+        const nameEl   = document.getElementById('owner_name_' + idx);
+        const mobileEl = document.getElementById('owner_mobile_' + idx);
+        const waLink   = document.getElementById('whatsapp_' + idx);
+
+        btn.className      = 'contact-reveal contact-shown';
+        btn.textContent    = '📞 ' + mobile;
+        nameEl.textContent = ownerName;
+        mobileEl.textContent = mobile;
+        waLink.href = 'https://wa.me/91' + mobile.replace(/\D/g,'') + '?text=Namaste%2C%20GharDhundo%20par%20aapki%20property%20dekhi.%20Kya%20abhi%20available%20hai%3F';
+        strip.style.display = 'block';
+    }
+
+    // ── Focus enquiry form ────────────────────────────────────────────────────
+    function focusForm() {
+        document.getElementById('leadForm').scrollIntoView({ behavior:'smooth', block:'start' });
+        setTimeout(() => document.querySelector('[name="mobile"]').focus(), 600);
+    }
+</script>
+</body>
+</html>

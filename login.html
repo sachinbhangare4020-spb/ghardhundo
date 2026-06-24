@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GharDhundo - Login / Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --orange: #FF6B35;
+            --deep: #1A1A2E;
+            --teal: #0F3460;
+            --gold: #F7B731;
+            --cream: #FFF8F0;
+            --green: #27AE60;
+        }
+
+        body {
+            font-family: 'Hind', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1A1A2E 0%, #0F3460 50%, #16213E 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+
+        .logo {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .logo span { color: var(--gold); }
+        .logo-sub { color: rgba(255,255,255,0.55); font-size: 0.88rem; text-align: center; margin-bottom: 28px; }
+
+        .card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: #f4f6f8;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            background: transparent;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: 0.3s;
+            position: relative;
+        }
+        .tab-btn.active {
+            color: var(--teal);
+            background: #fff;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--orange);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* FORM AREA */
+        .form-area { padding: 32px 28px; }
+
+        /* Flash messages */
+        .flash {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+        .flash.success { background: #d1fae5; color: #065f46; border-left: 4px solid var(--green); }
+        .flash.danger  { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+
+        .form-group { margin-bottom: 18px; }
+        label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Hind', sans-serif;
+            font-size: 0.95rem;
+            color: var(--deep);
+            background: #fff;
+            transition: 0.2s;
+            outline: none;
+        }
+        input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+        input::placeholder { color: #9ca3af; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--orange), #ff8c42);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.35); }
+
+        .note {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.82rem;
+            margin-top: 14px;
+            line-height: 1.5;
+        }
+
+        /* Tab content toggle */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tab-content.active { animation: fadeIn 0.35s ease; }
+    </style>
+</head>
+<body>
+
+<a href="/" class="back-link">&#8592; Back to Home</a>
+
+<div class="logo">Ghar<span>Dhundo</span></div>
+<p class="logo-sub">Mumbai ka apna Room Rent Portal</p>
+
+<div class="card">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Login Karo</button>
+        <button class="tab-btn" onclick="switchTab('register')">New Registration</button>
+    </div>
+
+    <div class="form-area">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for cat, msg in messages %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- LOGIN FORM -->
+        <div class="tab-content active" id="tab-login">
+            <form method="POST">
+                <input type="hidden" name="action" value="login">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="aapka@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Password daalo" required>
+                </div>
+                <button type="submit" class="btn-submit">Login Karo</button>
+            </form>
+            <p class="note">Naya user hai? Upar "New Registration" tab click karo - free hai!</p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="tab-content" id="tab-register">
+            <form method="POST">
+                <input type="hidden" name="action" value="register">
+                <div class="form-group">
+                    <label>Poora Naam</label>
+                    <input type="text" name="full_name" placeholder="Aapka poora naam" required>
+                </div>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" name="mobile" placeholder="10 digit mobile number" maxlength="10" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="aapka@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password Banao</label>
+                    <input type="password" name="password" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+                <button type="submit" class="btn-submit">Free Registration Karo</button>
+            </form>
+            <p class="note">Register karne se aap hamare Privacy Policy se agree karte hain. Koi spam nahi bhejenge.</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        event.target.classList.add('active');
+    }
+</script>
+</body>
+</html>

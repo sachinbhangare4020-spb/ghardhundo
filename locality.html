@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GharDhundo - Area Choose Karo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --orange: #FF6B35;
+            --deep: #1A1A2E;
+            --teal: #0F3460;
+            --gold: #F7B731;
+            --cream: #FFF8F0;
+            --green: #27AE60;
+        }
+        body { font-family: 'Hind', sans-serif; background: #f4f6f8; color: var(--deep); }
+
+        /* NAV */ 
+        nav {
+            background: var(--teal);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-logo {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .nav-logo span { color: var(--gold); }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-user {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+        .nav-user strong { color: var(--gold); }
+        nav a.logout {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        nav a.logout:hover { color: #fff; }
+
+        /* HEADER */
+        .page-header {
+            background: linear-gradient(135deg, var(--deep), #16213E);
+            padding: 40px 24px;
+            text-align: center;
+            color: #fff;
+        }
+        .page-header h1 {
+            font-family: 'Baloo 2', cursive;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .page-header h1 span { color: var(--orange); }
+        .page-header p { color: rgba(255,255,255,0.7); font-size: 1rem; }
+
+        /* FILTER BAR */
+        .filter-bar {
+            background: #fff;
+            padding: 16px 24px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .filter-bar span { font-size: 0.88rem; color: #6b7280; font-weight: 600; }
+        .filter-btn {
+            padding: 7px 16px;
+            border-radius: 50px;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #374151;
+            font-family: 'Hind', sans-serif;
+            transition: 0.2s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--teal);
+            color: #fff;
+            border-color: var(--teal);
+        }
+
+        /* MAIN */
+        main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 20px;
+        }
+
+        .area-card {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+            border: 1.5px solid #eee;
+            transition: 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+            animation: cardIn 0.4s ease both;
+        }
+        .area-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,0.12); border-color: var(--orange); }
+
+        .card-img {
+            height: 140px;
+            background: linear-gradient(135deg, var(--teal), #16213E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-img::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,107,53,0.3), rgba(15,52,96,0.8));
+        }
+        .card-img-text {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -2px;
+        }
+        .card-type-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+        .type-urban    { background: rgba(39,174,96,0.85); color: #fff; }
+        .type-suburban { background: rgba(255,107,53,0.85); color: #fff; }
+        .type-navi     { background: rgba(247,183,49,0.85); color: var(--deep); }
+        .type-rural    { background: rgba(107,114,128,0.85); color: #fff; }
+
+        .card-body { padding: 18px; }
+        .card-body h3 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--deep);
+            margin-bottom: 6px;
+        }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+        .rooms-count {
+            background: #fff0e8;
+            color: var(--orange);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .view-btn {
+            background: var(--teal);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .area-card:hover .view-btn { background: var(--orange); }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .area-card:nth-child(1)  { animation-delay: 0.05s; }
+        .area-card:nth-child(2)  { animation-delay: 0.10s; }
+        .area-card:nth-child(3)  { animation-delay: 0.15s; }
+        .area-card:nth-child(4)  { animation-delay: 0.20s; }
+        .area-card:nth-child(5)  { animation-delay: 0.25s; }
+        .area-card:nth-child(6)  { animation-delay: 0.30s; }
+        .area-card:nth-child(7)  { animation-delay: 0.35s; }
+        .area-card:nth-child(8)  { animation-delay: 0.40s; }
+        .area-card:nth-child(9)  { animation-delay: 0.45s; }
+        .area-card:nth-child(10) { animation-delay: 0.50s; }
+        .area-card:nth-child(11) { animation-delay: 0.55s; }
+        .area-card:nth-child(12) { animation-delay: 0.60s; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">Ghar<span>Dhundo</span></div>
+    
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="/list-property" 
+           style="background:#FF6B35; color:white; padding:9px 18px; 
+                  border-radius:50px; text-decoration:none; font-weight:600; 
+                  font-size:0.9rem;">
+            + List Property
+        </a>
+        <div class="nav-user">Namaste, <strong>{{ user }}</strong></div>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1>Apna <span>Area</span> Choose Karo</h1>
+    <p>Mumbai, Navi Mumbai aur Thane ke sabse popular areas mein rooms dhundhiye</p>
+</div>
+
+<div class="filter-bar">
+    <span>Filter:</span>
+    <button class="filter-btn active" onclick="filterCards('all', this)">Sab Areas</button>
+    <button class="filter-btn" onclick="filterCards('Urban', this)">Urban</button>
+    <button class="filter-btn" onclick="filterCards('Suburban', this)">Suburban</button>
+    <button class="filter-btn" onclick="filterCards('Navi Mumbai', this)">Navi Mumbai</button>
+    <button class="filter-btn" onclick="filterCards('Rural', this)">Rural</button>
+</div>
+
+<main>
+    <div class="grid" id="areasGrid">
+
+        {% for area in areas %}
+        {% set type_map = {
+            'Urban': 'type-urban',
+            'Suburban': 'type-suburban',
+            'Navi Mumbai': 'type-navi',
+            'Rural': 'type-rural'
+        } %}
+        <a href="/rooms/{{ area.name }}" class="area-card" data-type="{{ area.type }}">
+            <div class="card-img">
+                <div class="card-img-text">{{ area.name[:2] }}</div>
+                <div class="card-type-badge {{ type_map.get(area.type, 'type-urban') }}">{{ area.type }}</div>
+            </div>
+            <div class="card-body">
+                <h3>{{ area.name }}</h3>
+                <p style="color:#6b7280; font-size:0.88rem;">Mumbai Metropolitan Region</p>
+                <div class="card-meta">
+                    <span class="rooms-count">{{ area.rooms }} Rooms</span>
+                    <span class="view-btn">Dekho</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+    </div>
+</main>
+
+<script>
+    function filterCards(type, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cards = document.querySelectorAll('.area-card');
+        cards.forEach(card => {
+            if (type === 'all' || card.dataset.type === type) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>
